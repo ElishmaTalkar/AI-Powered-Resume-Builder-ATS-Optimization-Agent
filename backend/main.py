@@ -45,14 +45,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure data directories exist (use /tmp on Vercel serverless)
-IS_VERCEL = os.getenv("VERCEL", False)
-if IS_VERCEL:
+# Ensure data directories exist (use /tmp on Vercel/serverless)
+IS_SERVERLESS = bool(os.getenv("VERCEL")) or bool(os.getenv("VERCEL_ENV")) or bool(os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+if not IS_SERVERLESS:
+    # Double-check: try to detect read-only filesystem
+    try:
+        os.makedirs("_test_write", exist_ok=True)
+        os.rmdir("_test_write")
+    except OSError:
+        IS_SERVERLESS = True
+
+if IS_SERVERLESS:
     UPLOAD_DIR = "/tmp/uploads"
     OUTPUT_DIR = "/tmp/output"
+    logger.info("☁️  Running in SERVERLESS mode (using /tmp)")
 else:
     UPLOAD_DIR = "uploads"
     OUTPUT_DIR = "backend/output"
+    logger.info("💻 Running in LOCAL mode")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 

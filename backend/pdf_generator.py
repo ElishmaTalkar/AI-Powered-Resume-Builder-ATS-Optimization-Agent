@@ -6,7 +6,8 @@ import shutil
 
 class PDFGenerator:
     TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
-    OUTPUT_DIR = "/tmp/output" if os.getenv("VERCEL", False) else os.path.join(os.path.dirname(__file__), "output")
+    _is_serverless = bool(os.getenv("VERCEL")) or bool(os.getenv("VERCEL_ENV")) or bool(os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+    OUTPUT_DIR = "/tmp/output" if _is_serverless else os.path.join(os.path.dirname(__file__), "output")
 
     def __init__(self):
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
