@@ -1,0 +1,37 @@
+{
+    "version": 2,
+    "buildCommand": "cd frontend && npm install && npm run build",
+    "outputDirectory": "frontend/dist",
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/api/index.py"
+        },
+        {
+            "source": "/parse",
+            "destination": "/api/index.py"
+        },
+        {
+            "source": "/score",
+            "destination": "/api/index.py"
+        },
+        {
+            "source": "/enhance",
+            "destination": "/api/index.py"
+        },
+        {
+            "source": "/chat",
+            "destination": "/api/index.py"
+        },
+        {
+            "source": "/generate",
+            "destination": "/api/index.py"
+        }
+    ],
+    "functions": {
+        "api/index.py": {
+            "runtime": "@vercel/python@latest",
+            "maxDuration": 60
+        }
+    }
+}
