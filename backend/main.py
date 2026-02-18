@@ -45,15 +45,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure data directories exist
-# Ensure data directories exist
-UPLOAD_DIR = "uploads"
-OUTPUT_DIR = "backend/output"
+# Ensure data directories exist (use /tmp on Vercel serverless)
+IS_VERCEL = os.getenv("VERCEL", False)
+if IS_VERCEL:
+    UPLOAD_DIR = "/tmp/uploads"
+    OUTPUT_DIR = "/tmp/output"
+else:
+    UPLOAD_DIR = "uploads"
+    OUTPUT_DIR = "backend/output"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Mount output directory to serve generated files
-app.mount("/output", StaticFiles(directory=OUTPUT_DIR), name="output")
+try:
+    app.mount("/output", StaticFiles(directory=OUTPUT_DIR), name="output")
+except Exception:
+    pass  # Skip if directory issues on serverless
 
 # --- Pydantic Models ---
 class ResumeData(BaseModel):

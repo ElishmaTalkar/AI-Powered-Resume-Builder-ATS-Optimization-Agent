@@ -6,7 +6,7 @@ import shutil
 
 class PDFGenerator:
     TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
-    OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "output")
+    OUTPUT_DIR = "/tmp/output" if os.getenv("VERCEL", False) else os.path.join(os.path.dirname(__file__), "output")
 
     def __init__(self):
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
