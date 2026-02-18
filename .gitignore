@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+backend/venv/
+__pycache__/
+*.pyc
+
+# Environment variables (contains API keys!)
+.env
+
+# Uploads and output files
+backend/uploads/
+backend/output/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+
+# Gemini agent data
+.gemini/
+
+# Other projects
+auth-dashboard-app/

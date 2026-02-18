@@ -1,0 +1,59 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=0.5in,top=0.5in,right=0.5in,bottom=0.5in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\definecolor{primary}{RGB}{59, 130, 246} % Blue
+
+\titleformat{\section}{\large\bfseries\color{primary}}{}{0em}{}[\hrule]
+
+\begin{document}
+
+\begin{center}
+    {\Huge \textbf{ {{ name }} }} \\ \vspace{0.2cm}
+    {{ email }} $\cdot$ {{ phone }} $\cdot$ {{ location }} \\
+    \href{ {{ linkedin }} }{LinkedIn} $\cdot$ \href{ {{ github }} }{GitHub}
+\end{center}
+
+\vspace{0.3cm}
+
+\section{Summary}
+{{ summary }}
+
+\section{Experience}
+{% for job in experience %}
+\noindent \textbf{ {{ job.role }} } \hfill {{ job.dates }} \\
+\textit{ {{ job.company }} } \hfill {{ job.location }}
+\begin{itemize}[noitemsep,topsep=0pt]
+    {% for detail in job.details %}
+    \item {{ detail }}
+    {% endfor %}
+\end{itemize}
+\vspace{0.2cm}
+{% endfor %}
+
+\section{Skills}
+\begin{itemize}[noitemsep,topsep=0pt]
+    {% for category, skills in skills.items() %}
+    \item \textbf{ {{ category }}:} {{ skills | join(', ') }}
+    {% endfor %}
+\end{itemize}
+
+\section{Projects}
+{% for project in projects %}
+\noindent \textbf{ {{ project.name }} } \hfill \href{ {{ project.link }} }{Link} \\
+{{ project.description }}
+\vspace{0.2cm}
+{% endfor %}
+
+\section{Education}
+{% for edu in education %}
+\noindent \textbf{ {{ edu.degree }} } \hfill {{ edu.dates }} \\
+\textit{ {{ edu.school }} } \hfill {{ edu.location }}
+\vspace{0.2cm}
+{% endfor %}
+
+\end{document}

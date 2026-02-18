@@ -1,0 +1,45 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[empty]{fullpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Minimal formatting
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+
+\begin{document}
+
+\begin{center}
+    {\huge \textbf{\VAR{name}}} \\
+    \VAR{email} | \VAR{phone} | \VAR{location}
+\end{center}
+
+\section{Summary}
+\VAR{summary}
+
+\section{Experience}
+\BLOCK{for job in experience}
+\textbf{\VAR{job.role}} \hfill \VAR{job.dates} \\
+\textit{\VAR{job.company}} \hfill \VAR{job.location}
+\begin{itemize}[noitemsep,topsep=0pt]
+    \BLOCK{for detail in job.details}
+    \item \VAR{detail}
+    \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endfor}
+
+\section{Education}
+\BLOCK{for edu in education}
+\textbf{\VAR{edu.degree}} \hfill \VAR{edu.dates} \\
+\textit{\VAR{edu.school}} \hfill \VAR{edu.location}
+\BLOCK{endfor}
+
+\section{Skills}
+\begin{itemize}[noitemsep,topsep=0pt]
+\BLOCK{for category, sks in skills.items()}
+\item \textbf{\VAR{category}}: \VAR{sks|join(', ')}
+\BLOCK{endfor}
+\end{itemize}
+
+\end{document}

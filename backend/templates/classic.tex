@@ -1,0 +1,43 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+
+\begin{document}
+\begin{center}
+    {\LARGE \textbf{\VAR{name}}} \\
+    \VAR{email} | \VAR{phone} | \VAR{location}
+\end{center}
+
+\hrule
+\vspace{1em}
+
+\section*{Professional Summary}
+\VAR{summary}
+
+\section*{Experience}
+\BLOCK{for job in experience}
+\noindent \textbf{\VAR{job.role}} \hfill \VAR{job.dates} \\
+\textit{\VAR{job.company}} \hfill \VAR{job.location}
+\begin{itemize}
+    \BLOCK{for detail in job.details}
+    \item \VAR{detail}
+    \BLOCK{endfor}
+\end{itemize}
+\vspace{0.5em}
+\BLOCK{endfor}
+
+\section*{Education}
+\BLOCK{for edu in education}
+\noindent \textbf{\VAR{edu.degree}} \hfill \VAR{edu.dates} \\
+\textit{\VAR{edu.school}} \hfill \VAR{edu.location}
+\vspace{0.5em}
+\BLOCK{endfor}
+
+\section*{Skills}
+\BLOCK{for category, sks in skills.items()}
+\noindent \textbf{\VAR{category}}: \VAR{sks|join(', ')} \\
+\BLOCK{endfor}
+
+\end{document}
