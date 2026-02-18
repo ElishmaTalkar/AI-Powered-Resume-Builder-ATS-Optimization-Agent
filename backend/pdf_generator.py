@@ -23,21 +23,7 @@ class PDFGenerator:
             trim_blocks=True,
             autoescape=False,
         )
-        # Re-configure for standard jinja if using standard .tex logic I wrote above...
-        # Wait, the template I wrote uses {{ }} which conflicts with LaTeX.
-        # I should fix the template or the environment.
-        # Standard practice is to change jinja delimiters for LaTeX.
-        # I will use standard jinja delimiters in the python code below corresponding to what I wrote in the template file.
-        # BUT I wrote {{ }} in the template. LaTeX uses {} a lot.
-        # So I should probably change the template to use \VAR{} style or change the env here.
-        # I will change the env to match {{ }} but avoiding conflicts might be hard.
-        # Actually, simpler to just use standard jinja env and use {{ }} in template, but escape latex braces?
-        # A bit risky.
-        # I'll stick to a simpler approach: use standard Jinja2 {{ }} but ensure I don't use it for latex commands.
-        # My template used {{ }}.
-        self.jinja_env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(self.TEMPLATE_DIR)
-        )
+
 
     def generate_resume(self, data: dict, format: str = "pdf", template_name: str = "classic") -> str:
         if format == "pdf":
@@ -47,28 +33,76 @@ class PDFGenerator:
         else:
             raise ValueError("Unsupported format")
 
+    def escape_latex(self, text: str) -> str:
+        """Escape LaTeX special characters."""
+        if not isinstance(text, str):
+            return text
+        chars = {
+            "&": r"\&",
+            "%": r"\%",
+            "$": r"\$",
+            "#": r"\#",
+            "_": r"\_",
+            "{": r"\{",
+            "}": r"\}",
+            "~": r"\textasciitilde{}",
+            "^": r"\textasciicircum{}",
+            "\\": r"\textbackslash{}",
+        }
+        escaped = ""
+        for char in text:
+            escaped += chars.get(char, char)
+        return escaped
+
+    def sanitize_data(self, data):
+        """Recursively escape strings in data for LaTeX."""
+        if isinstance(data, dict):
+            return {k: self.sanitize_data(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self.sanitize_data(v) for v in data]
+        elif isinstance(data, str):
+            return self.escape_latex(data)
+        else:
+            return data
+
     def _generate_pdf(self, data: dict, template_name: str) -> str:
         try:
+            # save raw name for filename
+            raw_name = data.get('name', 'user')
+            
+            # Escape special LaTeX characters in data (returns new dict)
+            sanitized_data = self.sanitize_data(data)
+
             # Ensure template exists, default to classic if not found
             if not os.path.exists(os.path.join(self.TEMPLATE_DIR, f"{template_name}.tex")):
                 template_name = "classic"
-                
-            template = self.jinja_env.get_template(f"{template_name}.tex")
-            rendered_tex = template.render(**data)
             
-            tex_filename = f"resume_{data.get('name', 'user').replace(' ', '_')}.tex"
+            template = self.jinja_env.get_template(f"{template_name}.tex")
+            rendered_tex = template.render(**sanitized_data)
+            
+            # Sanitize filename
+            safe_name = "".join([c if c.isalnum() else "_" for c in raw_name])
+            tex_filename = f"resume_{safe_name}.tex"
             tex_path = os.path.join(self.OUTPUT_DIR, tex_filename)
             
             with open(tex_path, "w") as f:
                 f.write(rendered_tex)
             
             # Compile with pdflatex
-            # Check if pdflatex is available
+            # Check if pdflatex is available in PATH, if not check common Mac locations
+            if not shutil.which("pdflatex"):
+                # Common MacTeX paths
+                possible_paths = ["/Library/TeX/texbin", "/usr/local/bin", "/usr/texbin"]
+                for p in possible_paths:
+                    if os.path.exists(os.path.join(p, "pdflatex")):
+                        os.environ["PATH"] += os.pathsep + p
+                        break
+            
             if not shutil.which("pdflatex"):
                  raise EnvironmentError("pdflatex not found. Please install TeX distribution.")
 
             subprocess.run(
-                ["pdflatex", "-output-directory", self.OUTPUT_DIR, tex_path],
+                ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "-output-directory", self.OUTPUT_DIR, tex_path],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE

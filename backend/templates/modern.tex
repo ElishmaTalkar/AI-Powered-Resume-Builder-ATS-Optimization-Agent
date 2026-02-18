@@ -13,47 +13,47 @@
 \begin{document}
 
 \begin{center}
-    {\Huge \textbf{ {{ name }} }} \\ \vspace{0.2cm}
-    {{ email }} $\cdot$ {{ phone }} $\cdot$ {{ location }} \\
-    \href{ {{ linkedin }} }{LinkedIn} $\cdot$ \href{ {{ github }} }{GitHub}
+    {\Huge \textbf{ \VAR{name} }} \\ \vspace{0.2cm}
+    \VAR{email} $\cdot$ \VAR{phone} $\cdot$ \VAR{location} \\
+    \href{ \VAR{linkedin} }{LinkedIn} $\cdot$ \href{ \VAR{github} }{GitHub}
 \end{center}
 
 \vspace{0.3cm}
 
 \section{Summary}
-{{ summary }}
+\VAR{summary}
 
 \section{Experience}
-{% for job in experience %}
-\noindent \textbf{ {{ job.role }} } \hfill {{ job.dates }} \\
-\textit{ {{ job.company }} } \hfill {{ job.location }}
+\BLOCK{for job in experience}
+\noindent \textbf{ \VAR{job.role} } \hfill \VAR{job.dates} \\
+\textit{ \VAR{job.company} } \hfill \VAR{job.location}
 \begin{itemize}[noitemsep,topsep=0pt]
-    {% for detail in job.details %}
-    \item {{ detail }}
-    {% endfor %}
+    \BLOCK{for detail in job.details}
+    \item \VAR{detail}
+    \BLOCK{endfor}
 \end{itemize}
 \vspace{0.2cm}
-{% endfor %}
+\BLOCK{endfor}
 
 \section{Skills}
 \begin{itemize}[noitemsep,topsep=0pt]
-    {% for category, skills in skills.items() %}
-    \item \textbf{ {{ category }}:} {{ skills | join(', ') }}
-    {% endfor %}
+    \BLOCK{for category, skills in skills.items()}
+    \item \textbf{ \VAR{category}:} \VAR{skills | join(', ')}
+    \BLOCK{endfor}
 \end{itemize}
 
 \section{Projects}
-{% for project in projects %}
-\noindent \textbf{ {{ project.name }} } \hfill \href{ {{ project.link }} }{Link} \\
-{{ project.description }}
+\BLOCK{for project in projects}
+\noindent \textbf{ \VAR{project.name} } \hfill \href{ \VAR{project.link} }{Link} \\
+\VAR{project.description}
 \vspace{0.2cm}
-{% endfor %}
+\BLOCK{endfor}
 
 \section{Education}
-{% for edu in education %}
-\noindent \textbf{ {{ edu.degree }} } \hfill {{ edu.dates }} \\
-\textit{ {{ edu.school }} } \hfill {{ edu.location }}
+\BLOCK{for edu in education}
+\noindent \textbf{ \VAR{edu.degree} } \hfill \VAR{edu.dates} \\
+\textit{ \VAR{edu.school} } \hfill \VAR{edu.location}
 \vspace{0.2cm}
-{% endfor %}
+\BLOCK{endfor}
 
 \end{document}

@@ -60,6 +60,7 @@ class AIEnhancer:
         if type == "keywords" and job_description:
              prompt = f"""You are an ATS optimization expert. Rewrite the following text to include relevant keywords from the Job Description provided below.
 Maintain the original meaning but ensure high keyword density for ATS matching.
+IMPORTANT: Return ONLY the optimized text. Do not include any introductory or concluding remarks.
 
 Job Description:
 {job_description}
@@ -71,6 +72,7 @@ Optimized Text:"""
         elif type == "grammar":
              prompt = f"""You are a professional editor. Correct any grammar, spelling, and punctuation errors in the following text.
 Improve sentence structure for clarity and flow, but keep the tone professional.
+IMPORTANT: Return ONLY the corrected text. Do not include any introductory or concluding remarks.
 
 Original Text:
 {text}
@@ -79,6 +81,7 @@ Corrected Text:"""
         elif type == "summary":
              prompt = f"""You are a professional resume writer. Create a compelling professional summary (3-4 sentences) based on the following resume content.
 Highlight key achievements, skills, and experience relevant to the role.
+IMPORTANT: Return ONLY the summary. Do not include any introductory or concluding remarks.
 
 Resume Content:
 {text}
@@ -87,6 +90,7 @@ Professional Summary:"""
         elif type == "bullet_points":
              prompt = f"""You are a professional resume writer. Rewrite the following work experience or project description into strong, ATS-friendly bullet points.
 Use action verbs, quantify achievements where possible, and keep each bullet concise.
+IMPORTANT: Return ONLY the bullet points. Do not include any introductory or concluding remarks.
 
 Original Text:
 {text}
@@ -95,6 +99,7 @@ Enhanced Bullet Points:"""
         else: # general / professional tone
             prompt = f"""You are a professional resume writer. Rewrite the following text to be more professional, 
 concise, and ATS-friendly. Use action verbs and quantify achievements where possible.
+IMPORTANT: Return ONLY the enhanced text. Do not include any introductory or concluding remarks.
 
 Original Text:
 {text}

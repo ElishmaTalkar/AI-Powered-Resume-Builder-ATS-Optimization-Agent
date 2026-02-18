@@ -890,7 +890,11 @@ const UploadForm = ({ onUploadSuccess }) => {
             onUploadSuccess(parseResult);
         } catch (err) {
             console.error(err);
-            setError('Failed to process resume. Please try again.');
+            let msg = err.detail || err.message || 'Failed to process resume.';
+            if (typeof err === 'object' && !err.detail && !err.message) {
+                msg += ' ' + JSON.stringify(err);
+            }
+            setError(msg);
         } finally {
             setLoading(false);
         }

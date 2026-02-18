@@ -46,8 +46,9 @@ app.add_middleware(
 )
 
 # Ensure data directories exist
+# Ensure data directories exist
 UPLOAD_DIR = "uploads"
-OUTPUT_DIR = "output"
+OUTPUT_DIR = "backend/output"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 

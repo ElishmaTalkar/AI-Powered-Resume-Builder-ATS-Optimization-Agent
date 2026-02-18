@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateResume, enhanceText, scoreResume, sendChatMessage } from '../api';
+import { generateResume, enhanceText, scoreResume, sendChatMessage, API_URL } from '../api';
 
 const Dashboard = ({ data, onBack }) => {
     const [resumeData, setResumeData] = useState(data);
@@ -55,9 +55,19 @@ const Dashboard = ({ data, onBack }) => {
     };
 
     const handleEnhance = async (type) => {
+        if (type === 'keywords' && !jobDescription.trim()) {
+            alert("Please enter a Job Description in the text area below to optimize keywords.");
+            return;
+        }
+
         setEnhancing(true);
         try {
             const result = await enhanceText(resumeData.text, type, jobDescription);
+
+            if (result.enhanced && result.enhanced.startsWith("Error:")) {
+                alert(result.enhanced);
+                return;
+            }
 
             // Re-score the enhanced text
             const newScore = await scoreResume(result.enhanced, jobDescription);
@@ -78,7 +88,7 @@ const Dashboard = ({ data, onBack }) => {
             alert(`Resume enhanced (${type}) and Score Updated!`);
         } catch (err) {
             console.error(err);
-            alert('Enhancement failed');
+            alert('Enhancement failed. Please try again.');
         } finally {
             setEnhancing(false);
         }
@@ -86,6 +96,7 @@ const Dashboard = ({ data, onBack }) => {
 
     const handleGenerate = async () => {
         setGenerating(true);
+        setDownloadUrl(''); // Reset previous URL
         try {
             // Prepare data for generation. 
             // The backend expects a specific ResumeData structure.
@@ -132,7 +143,8 @@ const Dashboard = ({ data, onBack }) => {
             setDownloadUrl(result.url);
         } catch (err) {
             console.error(err);
-            alert('Generation failed');
+            const errorMessage = err.detail || 'Generation failed. Please try again.';
+            alert(`Error: ${errorMessage}`);
         } finally {
             setGenerating(false);
         }
@@ -356,10 +368,10 @@ const Dashboard = ({ data, onBack }) => {
 
                 {downloadUrl && (
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                        <a href={`http://localhost:8000${downloadUrl}`} download style={{ display: 'inline-block', padding: '0.8rem 1.5rem', background: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
+                        <a href={`${API_URL}${downloadUrl}`} download style={{ display: 'inline-block', padding: '0.8rem 1.5rem', background: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
                             Download Resume
                         </a>
-                        <a href={`mailto:?subject=My Resume&body=Please find my attached resume here: http://localhost:8000${downloadUrl}`} style={{ display: 'inline-block', padding: '0.8rem 1.5rem', background: '#64748b', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
+                        <a href={`mailto:?subject=My Resume&body=Please find my attached resume here: ${API_URL}${downloadUrl}`} style={{ display: 'inline-block', padding: '0.8rem 1.5rem', background: '#64748b', color: 'white', textDecoration: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
                             Email to Self
                         </a>
                     </div>
@@ -378,7 +390,7 @@ const Dashboard = ({ data, onBack }) => {
                     <button onClick={() => handleEnhance('grammar')} disabled={enhancing}>
                         Fix Grammar
                     </button>
-                    <button onClick={() => handleEnhance('keywords')} disabled={enhancing || !jobDescription} title={!jobDescription ? "Enter Job Description first" : ""}>
+                    <button onClick={() => handleEnhance('keywords')} disabled={enhancing}>
                         Optimize Keywords
                     </button>
                     <button onClick={() => handleEnhance('general')} disabled={enhancing}>

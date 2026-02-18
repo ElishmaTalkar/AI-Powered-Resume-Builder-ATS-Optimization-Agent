@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use relative URL in production (Vercel), localhost in development
-const API_URL = import.meta.env.PROD ? '' : 'http://localhost:8000';
+export const API_URL = import.meta.env.PROD ? '' : 'http://localhost:8000';
 
 export const api = axios.create({
     baseURL: API_URL,
@@ -11,10 +11,14 @@ export const api = axios.create({
 });
 
 export const uploadResume = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    const response = await api.post('/parse', formData);
-    return response.data;
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await api.post('/parse', formData);
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
 };
 
 export const scoreResume = async (text, jobDescription = "", metadata = {}) => {
@@ -32,10 +36,14 @@ export const enhanceText = async (text, type = "general", jobDescription = "", p
 };
 
 export const generateResume = async (data, format = "pdf", template = "classic") => {
-    const response = await api.post('/generate', { data, format, template }, {
-        headers: { 'Content-Type': 'application/json' }
-    });
-    return response.data;
+    try {
+        const response = await api.post('/generate', { data, format, template }, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
 };
 
 export const sendChatMessage = async (message, context, provider = "openai") => {
