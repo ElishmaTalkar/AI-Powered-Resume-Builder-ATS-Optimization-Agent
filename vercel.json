@@ -1,37 +1,61 @@
 {
-    "version": 2,
-    "buildCommand": "cd frontend && npm install && npm run build",
-    "outputDirectory": "frontend/dist",
-    "rewrites": [
+    "builds": [
         {
-            "source": "/api/(.*)",
-            "destination": "/api/index.py"
+            "src": "api/index.py",
+            "use": "@vercel/python"
         },
         {
-            "source": "/parse",
-            "destination": "/api/index.py"
-        },
-        {
-            "source": "/score",
-            "destination": "/api/index.py"
-        },
-        {
-            "source": "/enhance",
-            "destination": "/api/index.py"
-        },
-        {
-            "source": "/chat",
-            "destination": "/api/index.py"
-        },
-        {
-            "source": "/generate",
-            "destination": "/api/index.py"
+            "src": "frontend/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist"
+            }
         }
     ],
-    "functions": {
-        "api/index.py": {
-            "runtime": "@vercel/python@latest",
-            "maxDuration": 60
+    "routes": [
+        {
+            "src": "/parse",
+            "dest": "/api/index.py",
+            "methods": [
+                "POST",
+                "OPTIONS"
+            ]
+        },
+        {
+            "src": "/score",
+            "dest": "/api/index.py",
+            "methods": [
+                "POST",
+                "OPTIONS"
+            ]
+        },
+        {
+            "src": "/enhance",
+            "dest": "/api/index.py",
+            "methods": [
+                "POST",
+                "OPTIONS"
+            ]
+        },
+        {
+            "src": "/chat",
+            "dest": "/api/index.py",
+            "methods": [
+                "POST",
+                "OPTIONS"
+            ]
+        },
+        {
+            "src": "/generate",
+            "dest": "/api/index.py",
+            "methods": [
+                "POST",
+                "OPTIONS"
+            ]
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/frontend/$1"
         }
-    }
+    ]
 }
